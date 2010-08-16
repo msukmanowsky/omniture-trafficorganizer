@@ -1,0 +1,1071 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<html>
+<head>
+<title>
+Omniture - Traffic Organizer Overview
+</title>
+<link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
+<script>
+function asd() {
+	
+		parent.document.title="TrafficOrganizer.js Overview";
+	
+}
+</script>
+</head>
+<body bgcolor="white" onload="asd();">
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> 	<font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top">
+<em>
+<b>Omniture - Traffic Organizer</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<center>
+	
+	   <h2>TrafficOrganizer.js</h2>
+	
+</center>
+
+	
+
+
+<h4>Summary</h4>
+<p>
+	
+		No overview generated for 'TrafficOrganizer.js'<BR/><BR/>
+	
+</p>
+
+<hr>
+
+
+    <table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+    <td colspan=2><font size="+2">
+    
+        <b>Class Summary</b>
+    
+    </font></td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="TrafficOrganizer.html">TrafficOrganizer</a></b></td>
+    <td>The TrafficOrganizer class is intended to expand the functionality of Omniture's limited traffic source reporting
+ capabilities.</td>
+    </tr>
+    
+    </table>
+    <hr/> 
+
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<!-- ========== END METHOD SUMMARY =========== -->
+
+
+        <pre class="sourceview"><span class="comment">/* 
+ * Copyright (C) 2010				Mike Sukmanowski (mike.sukmanowsky<span class="attrib">@oddinteractive</span>.com)
+*/</span>
+
+<span class="comment">/* Cookie Format
+	- m=[medium]|s=[source]|k=[keyword]|kg=[keywordGroup]|c=[Content]|cp=[Campaign Name]|r=[Full referrer]|rp=[Referring Path]
+	
+/* Formatting parameters
+	%r - full referrer 		(http://www.somesite.com/path/to/page.html)
+	%rd - referring domain 	(somesite.com)
+	%rp - referring path	(/path/to/page.html)
+	%m - medium
+	%s - source
+	%k - keyword
+	%kg - keywordGroup
+	%c - content
+	%cp - campaign name
+
+/**
+ * Generates the TrafficOrganizer object with default configuration.
+ * <span class="attrib">@constructor</span>
+ * <span class="attrib">@class</span> The TrafficOrganizer class is intended to expand the functionality of Omniture's limited traffic source reporting
+ * capabilities.  The class has been designed in mind for use with Omniture SiteCatalyst, but could theoretically be 
+ * used for other web analytics tools.  At it's core, the TrafficOrganizer borrows heavily from Google Analytics 
+ * traffic source reporting functionality but also adds a number of enhancements (e.g. referrer groups, keyword groups).
+ * At it's core, the traffic source manager looks at the following dimensions to classify all incomming traffic to a web site:
+ * &lt;ul&gt;
+ *   &lt;li&gt;medium/channel&lt;/li&gt;
+ *	 &lt;li&gt;source&lt;/li&gt;
+ *   &lt;li&gt;keyword&lt;/li&gt;
+ *   &lt;li&gt;content&lt;/li&gt;
+ *   &lt;li&gt;campaign name&lt;/li&gt;
+ *   &lt;li&gt;keyword group&lt;/li&gt;
+ * &lt;/ul&gt;
+ * For ease of use, traffic source manager also makes the full referrer and referring domain available.
+ * <span class="attrib">@author</span> Mike Sukmanowsky
+ * <span class="attrib">@version</span> 1.0
+ */</span>
+TrafficOrganizer = <span class="reserved">function</span>(omniObject) {
+	
+	TrafficOrganizer.VERSION = <span class="literal">"1.0"</span>;
+	
+	var s;
+	var cookieTimeout;
+	var cookieName;
+	
+	var searchEngineList;
+	
+	var searchKeywordGroups;
+	var referringSiteGroups;
+	var ignoredReferrers;
+	var ignoredSearchKeywords;
+	var paidSearchParameters;
+	
+	var directMediumName;
+	var referralMediumName;
+	var organicMediumName;
+	var ppcMediumName;
+	
+	var mediumKey;
+	var medium;
+	var sourceKey;
+	var source;
+	var contentKey;
+	var content;
+	var campaignKey;
+	var campaign;
+	var keywordKey;
+	var keyword;
+	var keywordGroup;
+	var referrer;
+	var referringDomain;
+	var referringPath;
+		
+	var firstPageOnly;
+	
+	
+	<span class="comment">/**
+	* Returns the current setting for how traffic source manager will behave after an initial call to 
+	* {<span class="attrib">@link</span> TrafficOrganizer#track} when session cookies are set.
+	* <span class="attrib">@returns</span> {boolean} &lt;code&gt;true&lt;/code&gt; if the traffic source manager is only supposed to populate output values on the initial page
+	* of the visit, &lt;code&gt;false&lt;/code&gt; otherwise.
+	*/</span>
+	<span class="reserved">this</span>.getFirstPageOnly = <span class="reserved">function</span>() {
+		<span class="reserved">return</span> firstPageOnly;
+	}
+	
+	<span class="comment">/**
+	 * Indicates whether or not output values will be populated after the initial call to {<span class="attrib">@link</span> TrafficOrganizer#track}.
+	 * Once the session cookie has expired (after 30 minutes by default but this can be adjusted with {<span class="attrib">@link</span> TrafficOrganizer#setCookieTimeout}
+	 * ), {<span class="attrib">@link</span> TrafficOrganizer#track} will automatically populate new values.
+	 * <span class="attrib">@param</span> {boolean} newFirstPageOnly A boolean value indicating whether or not values should be sent after initial call
+	 */</span>
+	<span class="reserved">this</span>.setFirstPageOnly = <span class="reserved">function</span>(newFirstPageOnly) {
+		firstPageOnly = newFirstPageOnly;
+	}
+	
+	<span class="comment">/**
+	* Adds a query string parameter to be interpreted as PPC by any search engine.
+	* <span class="attrib">@param</span> {String} newPaidSearchParameter The query string variable which will be visible on all landing pages from a PPC campaign.
+	*/</span>
+	<span class="reserved">this</span>.addPaidSearchParameter = <span class="reserved">function</span>(newPaidSearchParameter) {
+		paidSearchParameters.push(newPaidSearchParameter);	
+	}
+	
+	<span class="comment">/**
+	* Clears the list of paid search query string parameters.
+	*/</span>
+	<span class="reserved">this</span>.clearPaidSearchParameters = <span class="reserved">function</span>() {
+		paidSearchParmaeters = new Array();
+	}
+	
+	<span class="comment">/**
+	* Adds a user-defined search engine to the default search engine list.
+	* <span class="attrib">@param</span> {String} newSearchEngineDomain the top-level-domain of the new search engine (e.g. "google.com").  This value does not
+	* have to correspond precisely to a domain and can instead contain a portion of the domain if there are many exceptions (e.g. "google").
+	* <span class="attrib">@param</span> {String} newSearchEngineKeywordKey the query string variable where the search engine populates the search term.
+	* <span class="attrib">@param</span> {String} newSearchEngineName the name of the search engine which will appear in reporting.
+	*/</span>
+	<span class="reserved">this</span>.addSearchEngine = <span class="reserved">function</span>(newSearchEngineDomain, newSearchEngineKeywordKey, newSearchEngineName) {
+		searchEngineList.push([newSearchEngineDomain, newSearchEngineKeywordKey, newSearchEngineName]);
+	}
+	
+	<span class="comment">/**
+	* Used to classify a group of referring domains.
+	* <span class="attrib">@param</span> {String} domainList a comma-separated list of the top-level referring domains belonging to this group.
+	* <span class="attrib">@param</span> {String} groupMedium the corresponding medium/channel of the group.
+	* <span class="attrib">@param</span> {String} groupSource the corresponding source of the group.
+	*/</span>
+	<span class="reserved">this</span>.addReferrerGroup = <span class="reserved">function</span>(domainList, groupMedium, groupSource) {
+		referringSiteGroups.push([domainList, groupMedium, groupSource]);	
+	}
+	
+	<span class="comment">/**
+	* Clears all groups of referring domains that have been added.
+	*/</span>
+	<span class="reserved">this</span>.clearAllReferrerGroups = <span class="reserved">function</span>() {
+		referringSiteGroups = new Array();	
+	}
+	
+	<span class="comment">/**
+	* Used to classify a group of search keywords (organic or paid).
+	* <span class="attrib">@param</span> {String} keywordList a comma-separated list of keywords that belong in this group.
+	* <span class="attrib">@param</span> {String} groupName the name of the group.
+	*/</span>
+	<span class="reserved">this</span>.addSearchKeywordGroup = <span class="reserved">function</span>(keywordList, groupName) {
+		searchKeywordGroups.push([keywordList, groupName]);
+	}
+	
+	<span class="comment">/** 
+	* Clears all search keyword groups.
+	*/</span>
+	<span class="reserved">this</span>.clearAllSearchKeywordGroups = <span class="reserved">function</span>() {
+		searchKeywordGroups = new Array();
+	}
+	
+	<span class="comment">/** 
+	* Adds an referring domain to be treated as "direct" traffic.  Domains added to this list will also cause the TrafficOrganizer
+	* to avoid overwriting the session cookie.
+	* <span class="attrib">@param</span> {String,RegExp} referrerToIgnore can either be a {<span class="attrib">@link</span> String} or a {<span class="attrib">@link</span> RegExp}
+	*/</span>
+	<span class="reserved">this</span>.addIgnoredReferrer = <span class="reserved">function</span>(referrerToIgnore) {
+		ignoredReferrers.push(referrerToIgnore);
+	}
+	
+	<span class="comment">/** 
+	* Clears the current list of referring domains to be treated as direct traffic.
+	*/</span>
+	<span class="reserved">this</span>.clearIgnoredReferrers = <span class="reserved">function</span>() {
+		ignoredReferrers = new Array();
+	}
+	
+	<span class="comment">/**
+	* Adds an organic search keyword to be treated as though it were direct traffic.
+	* <span class="attrib">@param</span> {String,RegExp} keywordToIgnore can be either a {<span class="attrib">@link</span> String} or a {<span class="attrib">@link</span> RegExp}.
+	*/</span>
+	<span class="reserved">this</span>.addIgnoredSearchKeyword = <span class="reserved">function</span>(keywordToIgnore) {
+		ignoredSearchKeywords.push(keywordToIgnore);
+	}
+	
+	<span class="comment">/**
+	* Clears all organic search keywords that are to be treated as direct traffic.
+	*/</span>
+	<span class="reserved">this</span>.clearIgnoredSearchKeywords = <span class="reserved">function</span>() {
+		ignoredSearchKeywords = new Array();
+	}
+	
+	<span class="comment">/**
+	* Returns the medium once {<span class="attrib">@link</span> TrafficOrganizer#track} is called.  Calling prior to {<span class="attrib">@link</span> TrafficOrganizer#track}
+	* will return a blank value (i.e. "").
+	* <span class="attrib">@returns</span> {String} the medium.
+	*/</span>
+	<span class="reserved">this</span>.getMedium = <span class="reserved">function</span>() {
+		<span class="reserved">return</span> medium;
+	}
+	
+	<span class="comment">/**
+	* Returns the source once {<span class="attrib">@link</span> TrafficOrganizer#track} is called.  Calling prior to {<span class="attrib">@link</span> TrafficOrganizer#track}
+	* will return a blank value (i.e. "").
+	* <span class="attrib">@returns</span> {String} the source.
+	*/</span>	
+	<span class="reserved">this</span>.getSource = <span class="reserved">function</span>() {
+		<span class="reserved">return</span> source;
+	}
+	
+	<span class="comment">/**
+	* Returns the content once {<span class="attrib">@link</span> TrafficOrganizer#track} is called.  Calling prior to {<span class="attrib">@link</span> TrafficOrganizer#track}
+	* will return a blank value (i.e. "").
+	* <span class="attrib">@returns</span> {String} the content.
+	*/</span>
+	<span class="reserved">this</span>.getContent = <span class="reserved">function</span>() {
+		<span class="reserved">return</span> content;
+	}
+	
+	<span class="comment">/**
+	* Returns the keyword once {<span class="attrib">@link</span> TrafficOrganizer#track} is called.  Calling prior to {<span class="attrib">@link</span> TrafficOrganizer#track}
+	* will return a blank value (i.e. "").
+	* <span class="attrib">@returns</span> {String} the keyword.
+	*/</span>
+	<span class="reserved">this</span>.getKeyword = <span class="reserved">function</span>() {
+		<span class="reserved">return</span> keyword;
+	}
+	
+	<span class="comment">/**
+	* Returns the keyword group once {<span class="attrib">@link</span> TrafficOrganizer#track} is called.  Calling prior to {<span class="attrib">@link</span> TrafficOrganizer#track}
+	* will return a blank value (i.e. "").
+	* <span class="attrib">@returns</span> {String} the keyword group.
+	*/</span>
+	<span class="reserved">this</span>.getKeywordGroup = <span class="reserved">function</span>() {
+		<span class="reserved">return</span> keywordGroup;	
+	}
+	
+	<span class="comment">/**
+	* Returns the campaign once {<span class="attrib">@link</span> TrafficOrganizer#track} is called.  Calling prior to {<span class="attrib">@link</span> TrafficOrganizer#track}
+	* will return a blank value (i.e. "").
+	* <span class="attrib">@returns</span> {String} the campaign.
+	*/</span>
+	<span class="reserved">this</span>.getCampaign = <span class="reserved">function</span>() {
+		<span class="reserved">return</span> campaign;
+	}
+	
+	<span class="comment">/**
+	* Returns the referring domain path component of the URI once {<span class="attrib">@link</span> TrafficOrganizer#track} is called.
+	* <span class="attrib">@returns</span> {String} the path of the most recent referring URI.  Calling prior will return a blank value (i.e. "").  If traffic was direct, this value will be blank.
+	*/</span>
+	<span class="reserved">this</span>.getReferringPath = <span class="reserved">function</span>() {
+		<span class="reserved">return</span> referringPath;	
+	}
+	
+	<span class="comment">// Returns the full referrer (document.referrer) once {<span class="attrib">@link</span> TrafficOrganizer#track} is called.  Calling prior to {<span class="attrib">@link</span> TrafficOrganizer#track}</span>
+	<span class="comment">// will return a blank value (i.e. "").</span>
+	<span class="comment">// <span class="attrib">@returns</span> {String} the full referrer (document.referrer).</span>
+	<span class="comment">// <span class="attrib">@deprecated</span></span>
+	<span class="comment">/*
+	this.getReferrer = function() {
+		return referrer;	
+	}*/</span>
+	
+	<span class="comment">/**
+	* Returns the referring domain once {<span class="attrib">@link</span> TrafficOrganizer#track} is called.  Calling prior to {<span class="attrib">@link</span> TrafficOrganizer#track}
+	* will return a blank value (i.e. "").
+	* <span class="attrib">@returns</span> {String} the referring domain.
+	*/</span>
+	<span class="reserved">this</span>.getReferringDomain = <span class="reserved">function</span>() {
+		<span class="reserved">return</span> referringDomain;	
+	}
+	
+	<span class="comment">/**
+	* Sets the query string parameter that {<span class="attrib">@link</span> TrafficOrganizer#track} will use to populate the medium if present.
+	* <span class="attrib">@param</span> {String} newMediumKey the name of the new query string parameter to use (default is utm_medium).
+	*/</span>
+	<span class="reserved">this</span>.setMediumKeyName = <span class="reserved">function</span>(newMediumKey) {
+		mediumKey = newMediumKey;
+	}
+	
+	<span class="comment">/**
+	* Sets the query string parameter that {<span class="attrib">@link</span> TrafficOrganizer#track} will use to populate the source if present.
+	* <span class="attrib">@param</span> {String} newSourceKey the name of the new query string parameter to use (default is utm_source).
+	*/</span>	
+	<span class="reserved">this</span>.setSourceKey = <span class="reserved">function</span>(newSourceKey) {
+		sourceKey = newSourceKey;
+	}
+	
+	<span class="comment">/**
+	* Sets the query string parameter that {<span class="attrib">@link</span> TrafficOrganizer#track} will use to populate the content if present.
+	* <span class="attrib">@param</span> {String} newContentKey the name of the new query string parameter to use (default is utm_content).
+	*/</span>
+	<span class="reserved">this</span>.setContentKey = <span class="reserved">function</span>(newContentKey) {
+		contentKey = newContentKey;	
+	}
+	
+	<span class="comment">/**
+	* Sets the query string parameter that {<span class="attrib">@link</span> TrafficOrganizer#track} will use to populate the keyword if present.
+	* <span class="attrib">@param</span> {String} newKeywordKey the name of the new query string parameter to use (default is utm_term).
+	*/</span>
+	<span class="reserved">this</span>.setKeywordKey = <span class="reserved">function</span>(newKeywordKey) {
+		keywordKey = newKeywordKey;
+	}
+	
+	<span class="comment">/**
+	* Sets the query string parameter that {<span class="attrib">@link</span> TrafficOrganizer#track} will use to populate the keyword if present.
+	* <span class="attrib">@param</span> {String} newKeywordKey the name of the new query string parameter to use (default is utm_term).
+	*/</span>
+	<span class="reserved">this</span>.setCampaignKey = <span class="reserved">function</span>(newCampaignKey) {
+		campaignKey = newCampaignKey;
+	}
+	
+	<span class="comment">/**
+	* Sets the cookie name to use when storing the function.  Please note that all cookies are stored using Omniture's s.c_w function.
+	* <span class="attrib">@param</span> {String} newCookieName the new name to use for the traffic source manager cookie.
+	*/</span>
+	<span class="reserved">this</span>.setCookieName = <span class="reserved">function</span>(newCookieName) {
+		cookieName = newCookieName;	
+	}
+	
+	<span class="comment">/** 
+	* Returns the current cookie name that will be used to store traffic source data.
+	* <span class="attrib">@returns</span> {String} the current cookie name.
+	*/</span>
+	<span class="reserved">this</span>.getCookieName = <span class="reserved">function</span>() {
+		<span class="reserved">return</span> cookieName;
+	}
+	
+	<span class="comment">/**
+	* Sets the cookie timeout to use.  The default is 30 mins (which is the standard definition of a visit).
+	* <span class="attrib">@param</span> {int} newCookieTimeout the new timeout value to use measured in milliseconds (e.g. 1800000 ms = 30 mins).
+	*/</span>
+	<span class="reserved">this</span>.setCookieTimeout = <span class="reserved">function</span>(newCookieTimeout) {
+		cookieTimeout = newCookieTimeout;	
+	}
+	
+	<span class="comment">/** 
+	* Returns the current cookie timeout.
+	* <span class="attrib">@returns</span> {int} the current cookie timeout measured in milliseconds.
+	*/</span>
+	<span class="reserved">this</span>.getCookieTimeout = <span class="reserved">function</span>() {
+		<span class="reserved">return</span> cookieTimeout;
+	}
+	
+	<span class="comment">/** 
+	* Returns the name to be used for the medium output parameter in the event of direct traffic.
+	* <span class="attrib">@returns</span> {String} the medium value used for direct traffic (default is "Direct (Brand Aware) / Bookmarked / Continued Session").
+	*/</span>
+	<span class="reserved">this</span>.getDirectMediumName = <span class="reserved">function</span>() {
+		<span class="reserved">return</span> directMediumName;
+	}
+	
+	<span class="comment">/**
+	* Sets the name to be used for the medium output parameter in the event of direct traffic.
+	* <span class="attrib">@param</span> {String} newMediumName the new value to use for medium in the event of direct traffic (default is "Direct (Brand Aware) / Bookmarked / Continued Session").
+	*/</span>
+	<span class="reserved">this</span>.setDirectMediumName = <span class="reserved">function</span>(newMediumName) {
+		directMediumName = newMediumName;
+	}
+	
+	<span class="comment">/**
+	* Returns the name to be used for the medium output parameter in the event of organic referral traffic.
+	* <span class="attrib">@returns</span> {String} the medium value used for organic referral traffic (default is "Referrer: Organic").
+	*/</span>
+	<span class="reserved">this</span>.getReferralMediumName = <span class="reserved">function</span>() {
+		<span class="reserved">return</span> referralMediumName;	
+	}
+	
+	<span class="comment">/**
+	* Sets the name to be used for the medium in the event of organic referral traffic.
+	*/</span> 
+	<span class="reserved">this</span>.setReferralMediumName = <span class="reserved">function</span>(newMediumName) {
+		referralMediumName = newMediumName;
+	}
+	
+	<span class="comment">/**
+	* Returns the name to be used for the medium output parameter in the event of organic search traffic.
+	* <span class="attrib">@returns</span> {String} the medium value used for organic search traffic (default is "Search Engine: Organic").
+	*/</span>
+	<span class="reserved">this</span>.getOrganicMediumName = <span class="reserved">function</span>() {
+		<span class="reserved">return</span> organicMediumName;
+	}
+	
+	<span class="comment">/**
+	* Sets the name to be used for the medium in the event of organic search traffic.
+	* <span class="attrib">@param</span> {String} newMediumName the name to be used for organic search traffic.
+	*/</span> 
+	<span class="reserved">this</span>.setOrganicMediumName = <span class="reserved">function</span>(newMediumName) {
+		organicMediumName = newMediumName;
+	}
+	
+	<span class="comment">/**
+	* Returns the name to be used for the medium output parameter in the event of paid search traffic.
+	* <span class="attrib">@returns</span> {String} the medium value used for paid search traffic (default is "Search Engine: Paid").  Traffic is considered paid when a paid
+	* search query string parmaeter is detected.
+	* <span class="attrib">@see</span> TrafficOrganizer#addPaidSearchParameter
+	*/</span>
+	<span class="reserved">this</span>.getPPCMediumName = <span class="reserved">function</span>() {
+		<span class="reserved">return</span> ppcMediumName;	
+	}
+	
+	<span class="comment">/**
+	* Sets the name to be used for the medium in the event of organic search traffic.
+	* <span class="attrib">@param</span> {String} newMediumName the name to be used for paid search traffic.
+	* <span class="attrib">@see</span> TrafficOrganizer#addPaidSearchParameter
+	*/</span> 
+	<span class="reserved">this</span>.setPPCMediumName = <span class="reserved">function</span>(newMediumName) {
+		ppcMediumName = newMediumName;
+	}
+	
+	<span class="comment">/**
+	* Resets all the values that the traffic sources manager expects for query string parameters to identify a proper medium, source, campaign,
+	* keyword and content.
+	*/</span>
+	<span class="reserved">this</span>.resetKeys = <span class="reserved">function</span>() {
+		mediumKey = <span class="literal">"utm_medium"</span>;
+		sourceKey = <span class="literal">"utm_source"</span>;
+		campaignKey = <span class="literal">"utm_campaign"</span>;
+		keywordKey = <span class="literal">"utm_term"</span>;
+		contentKey = <span class="literal">"utm_content"</span>;
+	}
+	
+	<span class="comment">/**
+	* Resets ALL values to their initial values.  This will overwrite: cookie timeout, cookie name, search keyword groups, referring site groups,
+	* ignored keyword lists, paid search keyword lists, direct channel names, referral channel names, organic channel names and ppc channel names.
+	*/</span>
+	<span class="reserved">this</span>.resetAll = <span class="reserved">function</span>() {
+		<span class="reserved">this</span>.resetKeys();
+		
+		cookieTimeout 			= 1800000;	<span class="comment">// 30 minutes</span>
+		cookieName 				= <span class="literal">"_ga_tsm"</span>;
+		
+		medium 					= <span class="literal">""</span>;
+		source					= <span class="literal">""</span>;
+		campaign				= <span class="literal">""</span>;
+		keywordGroup			= <span class="literal">""</span>;
+		content					= <span class="literal">""</span>;
+		referrer				= document.referrer;
+		referringDomain			= getDomainFromURI(referrer);
+		referringPath			= getPathFromURI(referrer);
+		
+		searchKeywordGroups 	= new Array();
+		referringSiteGroups 	= new Array();
+		ignoredReferrers		= new Array();
+		ignoredSearchKeywords 	= new Array();	
+		paidSearchParameters	= new Array();
+		
+		ignoredReferrers.push(getDomainFromURI(document.location.href.toLowerCase()));
+		
+		directMediumName 		= <span class="literal">"Direct / Brand Aware: Typed / Bookmarked / etc"</span>;
+		referralMediumName 	= <span class="literal">"Referrer: Organic"</span>;
+		organicMediumName		= <span class="literal">"Search Engine: Organic"</span>;
+		ppcMediumName			= <span class="literal">"Search Engine: Paid"</span>;
+		
+		firstPageOnly			= true;
+	}
+	
+	<span class="comment">/**
+	* The core function of the traffic source manager class intended to be used after an instance is initialized and configured.
+	* The logic of this function is somewhat complex: &lt;br/&gt;
+	* &lt;ol&gt;
+	*	&lt;li&gt;If no traffic source cookie is found, the traffic source will be classified.&lt;/li&gt;
+	*	&lt;li&gt;If a traffic source cookie is found, it may be overwritten if and only if:&lt;/li&gt;
+	*	&lt;ol&gt;
+	*		&lt;li&gt;The referrer of the current page does not match the list of ignored referrers OR &lt;/li&gt;
+	*		&lt;li&gt;The medium and source query string parameters are present and have values set&lt;/li&gt;
+	*	&lt;/ol&gt;
+	* &lt;/ol&gt;
+	*/</span>
+	<span class="reserved">this</span>.track = <span class="reserved">function</span>() {
+		var overwrite = false;
+		
+		<span class="reserved">if</span> (!isCookieSet()) {
+			overwrite = true;	
+		} <span class="reserved">else</span> {
+			<span class="comment">// Conditions for overwriting the cookie are as follows:</span>
+			<span class="comment">//   - If the previous referring domain is not one of our ignored referrers, overwrite</span>
+			<span class="comment">//   - If the medium and source query string parameters are found, overwrite</span>
+			var src = s.getQueryParam(sourceKey);
+			var med = s.getQueryParam(mediumKey);
+			<span class="reserved">if</span> ( 	(inArray(referringDomain, ignoredReferrers) == -1) ||
+					(src != <span class="literal">""</span> &amp;&amp; med != <span class="literal">""</span>) ) {
+				overwrite = true;	
+			}
+		}
+		
+		<span class="reserved">if</span> (overwrite) {
+			classifyTrafficSource();
+			saveValuesToCookie();
+		} <span class="reserved">else</span> {
+			getValuesFromCookie();
+			<span class="reserved">if</span> (firstPageOnly) {
+				clearOutputValues();
+			}
+		}
+	}
+	
+	<span class="comment">/**
+	* Used solely by the {<span class="attrib">@link</span> TrafficOrganizer#track} function and will attempt to classify incomming traffic.
+	* Classification works as follows:
+	* &lt;ol&gt;
+	*	&lt;li&gt;Attempt to use query string parameters first if present&lt;/li&gt;
+	*	&lt;li&gt;If query string parameters aren't present, determine if traffic is direct (no referrer)&lt;/li&gt;
+	*	&lt;li&gt;If traffic is not direct, attempt to classify as search engine&lt;/li&gt;
+	*	&lt;li&gt;If not search, classify using referring site groups or as a regular referrer&lt;/li&gt;
+	* &lt;/ol&gt;
+	* <span class="attrib">@returns</span> will populate a medium and source at a minimum and possibly other variables if possible.
+	* <span class="attrib">@private</span>
+	*/</span>
+	<span class="reserved">function</span> classifyTrafficSource() {
+		medium = s.getQueryParam(mediumKey);
+		source = s.getQueryParam(sourceKey);
+		campaign = s.getQueryParam(campaignKey);
+		content = s.getQueryParam(contentKey);
+		keyword = s.getQueryParam(keywordKey);
+		keywordGroup = <span class="literal">""</span>;
+		
+		<span class="reserved">if</span> (source == <span class="literal">""</span> || medium == <span class="literal">""</span>) {
+			medium = <span class="literal">""</span>;
+			source = <span class="literal">""</span>;
+			campaign = <span class="literal">""</span>;
+			content = <span class="literal">""</span>;
+			keyword = <span class="literal">""</span>;
+			keywordGroup = <span class="literal">""</span>;
+			
+			<span class="comment">// Link is not tagged check to see if direct</span>
+			<span class="reserved">if</span> (referrer == <span class="literal">""</span>) {
+				medium = directMediumName;
+				source = <span class="literal">"(none)"</span>;
+			} <span class="reserved">else</span> {
+				<span class="reserved">if</span> (!checkSearchEngine()) {
+					<span class="reserved">if</span> (!checkReferringSiteGroups()) {
+						medium = referralMediumName;
+						source = referringDomain;	
+					}
+				}
+			}
+		} 
+	}
+	
+	<span class="comment">/**
+	*
+	* <span class="attrib">@private</span>
+	*/</span>
+	<span class="reserved">function</span> clearOutputValues() {
+		medium = <span class="literal">""</span>;
+		source = <span class="literal">""</span>;
+		campaign = <span class="literal">""</span>;
+		content = <span class="literal">""</span>;
+		keyword = <span class="literal">""</span>;
+		keywordGroup = <span class="literal">""</span>;
+		referringDomain = <span class="literal">""</span>;
+		referringPath = <span class="literal">""</span>;
+	}
+	
+	<span class="comment">/**
+	*
+	* <span class="attrib">@private</span>
+	*/</span>	
+	<span class="reserved">function</span> checkReferringSiteGroups() {
+		
+		<span class="reserved">if</span> (inArray(referringDomain, ignoredReferrers) &gt;= 0) {
+			medium = directMediumName;
+			source = referringDomain;
+			<span class="reserved">return</span> true;
+		}
+		
+		<span class="reserved">for</span> (var i = 0; i &lt; referringSiteGroups.length; i++) {
+			<span class="reserved">if</span>( inArray(referringDomain, referringSiteGroups[i][0]) &gt;= 0) {
+				medium = referringSiteGroups[i][1];
+				source = formatString(referringSiteGroups[i][2]);
+				<span class="reserved">return</span> true;
+			}
+		}
+		
+		<span class="reserved">return</span> false;
+	}
+	
+	<span class="comment">/**
+	* Checks to determine whether the active referrer is a search engine and populates appropriate variables.
+	* <span class="attrib">@returns</span> {boolean} true if it is determined to be a search engine, false otherwise.  If referrer is a search engine, this function also populates:
+	* &lt;ul&gt;
+	*   &lt;li&gt;Source&lt;/li&gt;
+	*   &lt;li&gt;Medium&lt;/li&gt;
+	*   &lt;li&gt;Keyword&lt;/li&gt;
+	*   &lt;li&gt;Keyword Group (optional)&lt;/li&gt;
+	* &lt;/ul&gt;
+	* <span class="attrib">@private</span>
+	*/</span>
+	<span class="reserved">function</span> checkSearchEngine() {
+		var engineFound = false;
+		
+		<span class="reserved">for</span> (var i = 0; (i &lt; searchEngineList.length) &amp;&amp; !engineFound; i++) {
+			<span class="reserved">if</span> (referringDomain.indexOf(searchEngineList[i][0]) &gt;= 0) {
+				engineFound = true;
+				
+				<span class="comment">// Need to check for paid search</span>
+				var isPaid = false;
+				<span class="reserved">for</span> (var j = 0; (j &lt; paidSearchParameters.length) &amp;&amp; !isPaid; j++) {
+					<span class="reserved">if</span> (s.getQueryParam(paidSearchParameters[j]) != <span class="literal">""</span>) {
+						isPaid = true;
+					} 
+				}
+				
+				medium = isPaid ? ppcMediumName : organicMediumName;
+				source = searchEngineList[i][2];
+				keyword = s.getQueryParam(searchEngineList[i][1],<span class="literal">''</span>,referrer).toLowerCase();
+				keyword = keyword.toLowerCase();
+				
+				var ignoredKeywordFound = false;
+				<span class="reserved">for</span> (var j = 0; (j &lt; ignoredSearchKeywords.length) &amp;&amp; !ignoredKeywordFound &amp;&amp; !isPaid; j++) {
+					<span class="reserved">if</span> (typeof(ignoredSearchKeywords[j]) == <span class="literal">"string"</span>) {
+						ignoredKeywordFound = keyword == ignoredSearchKeywords[j];
+					} <span class="reserved">else</span> <span class="reserved">if</span> (typeof(ignoredSearchKeywords[j]) == <span class="literal">"object"</span> &amp;&amp; ignoredSearchKeywords[j].test) {
+						ignoredKeywordFound = ignoredSearchKeywords[j].test(keyword);	
+					}
+				}
+				<span class="reserved">if</span> (ignoredKeywordFound &amp;&amp; !isPaid) medium = directMediumName;
+					
+				<span class="reserved">if</span> (!ignoredKeywordFound) {
+					var groupFound = false;
+					<span class="reserved">for</span> (var j = 0; (j &lt; searchKeywordGroups.length) &amp;&amp; !groupFound; j++) {
+						<span class="reserved">if</span> (typeof(searchKeywordGroups[j][0]) == <span class="literal">"string"</span>) {
+							groupFound = (searchKeywordGroups[j][0].indexOf(keyword) &gt;= 0);					
+						} <span class="reserved">else</span> <span class="reserved">if</span> (typeof(searchKeywordGroups[j][0]) == <span class="literal">"object"</span> &amp;&amp; searchKeywordGroups[j][0].test) {
+							groupFound = searchKeywordGroups[j][0].test(keyword);	
+						}
+						<span class="reserved">if</span> (groupFound) keywordGroup = searchKeywordGroups[j][1];
+					}
+				} <span class="reserved">else</span> {
+					keywordGroup = <span class="literal">"Brand Aware Keywords / Direct Traffic"</span>;
+				}
+			}
+		}
+		
+		<span class="reserved">return</span> engineFound;
+	}
+	
+	<span class="comment">/**
+	*
+	* <span class="attrib">@private</span>
+	*/</span>
+	<span class="reserved">function</span> getDomainFromURI(uri) {
+		var rd = <span class="literal">""</span>;
+		
+		<span class="reserved">if</span> (uri) {
+			var domainBegin = uri.indexOf(<span class="literal">"//"</span>);
+			var domainEnd = uri.indexOf(<span class="literal">"/"</span>, domainBegin+2);
+			rd = uri.substring(domainBegin+2, domainEnd);
+			rd = rd.replace(<span class="literal">"www."</span>,<span class="literal">""</span>);
+		}
+		
+		<span class="reserved">return</span> rd;
+	}
+	
+	<span class="comment">/**
+	* <span class="attrib">@private</span>
+	*/</span>
+	<span class="reserved">function</span> getPathFromURI(uri) {
+		var path = <span class="literal">""</span>;
+		
+		<span class="reserved">if</span> (uri) {
+			var pathBegin = uri.indexOf(<span class="literal">"//"</span>);
+			pathBegin = uri.indexOf(<span class="literal">"/"</span>, pathBegin+2);
+			var pathEnd = uri.indexOf(<span class="literal">"?"</span>, pathBegin) &gt;= 0 ? uri.indexOf(<span class="literal">"?"</span>, pathBegin) : uri.length;
+			
+			path = uri.substring(pathBegin, pathEnd);
+		}
+		
+		<span class="reserved">return</span> path;
+	}
+	
+	<span class="comment">/**
+	*
+	* <span class="attrib">@private</span>
+	*/</span>	
+	<span class="reserved">function</span> formatString(string) {
+		var str = string;
+		
+		str = str.replace(/\%rd/g, referringDomain);
+		str = str.replace(/\%rp/g, referringPath);
+		<span class="comment">//str = str.replace(/\%r/g, referrer);</span>
+		str = str.replace(/\%m/g, medium);
+		str = str.replace(/\%s/g, source);
+		str = str.replace(/\%cp/g, campaign);
+		str = str.replace(/\%c/g, content);
+		str = str.replace(/\%kg/g, keywordGroup);
+		str = str.replace(/\%k/g, keyword);
+		
+		<span class="reserved">return</span> str;
+	}
+
+	<span class="comment">/**
+	* <span class="attrib">@private</span>
+	*/</span>
+	<span class="reserved">function</span> isCookieSet() {
+		<span class="reserved">return</span> (s.c_r(cookieName) ? true : false);
+	}
+	<span class="comment">/**
+	*
+	* <span class="attrib">@private</span>
+	*/</span>
+	<span class="reserved">function</span> getValuesFromCookie() {
+		<span class="comment">//var str = getCookie(cookieName);</span>
+		var str = s.c_r(cookieName);
+		
+		<span class="reserved">if</span> (!str) {
+			<span class="reserved">return</span> false;
+		} <span class="reserved">else</span> {
+			str = str.split(<span class="literal">"|"</span>);
+			<span class="reserved">for</span> (var i = 0; i &lt; str.length; i++) {
+				var key = str[i].split(<span class="literal">"="</span>)[0];
+				var value = unescapeValue(str[i].split(<span class="literal">"="</span>)[1]);
+				
+				switch(key) {
+					case <span class="literal">"m"</span> :
+					medium = value;
+					break;
+					
+					case <span class="literal">"s"</span> :
+					source = value;
+					break;
+					
+					case <span class="literal">"k"</span> :
+					keyword = value;
+					break;
+					
+					case <span class="literal">"kg"</span> :
+					keywordGroup = value;
+					break;
+					
+					case <span class="literal">"c"</span> :
+					content = value;
+					break;
+					
+					case <span class="literal">"cp"</span> :
+					campaign = value;
+					break;
+					
+					<span class="comment">/*
+					case "r" :
+					referrer = value;
+					break;
+					*/</span>
+					
+					case <span class="literal">"rp"</span> :
+					referringPath = value;
+					break;
+					
+					case <span class="literal">"rd"</span> :
+					referringDomain = value;
+					break;
+				}
+			}
+			<span class="reserved">return</span> true;
+		}	
+	}
+	
+	<span class="comment">/**
+	*
+	* <span class="attrib">@private</span>
+	*/</span>	
+	<span class="reserved">function</span> saveValuesToCookie() {
+		var str = <span class="literal">""</span>;
+		
+		str += <span class="literal">"m="</span>+escapeValue(medium);
+		str += <span class="literal">"|s="</span>+escapeValue(source);
+		<span class="reserved">if</span> (keyword) {
+			str += <span class="literal">"|k="</span>+escapeValue(keyword);
+		}
+		
+		<span class="reserved">if</span> (keywordGroup) {
+			str += <span class="literal">"|kg="</span>+escapeValue(keywordGroup);
+		}
+		
+		<span class="reserved">if</span> (content) {
+			str += <span class="literal">"|c="</span>+escapeValue(content);
+		}
+		
+		<span class="reserved">if</span> (campaign) {
+			str += <span class="literal">"|cp="</span>+escapeValue(campaign);
+		}
+		
+		<span class="comment">/*
+		if (referrer) {
+			str += "|r="+escapeValue(referrer);
+		}
+		*/</span>
+		
+		<span class="reserved">if</span>(referringPath) {
+			str += <span class="literal">"|rp="</span>+escapeValue(referringPath);
+		}
+		
+		<span class="reserved">if</span> (referringDomain) {
+			str += <span class="literal">"|rd="</span>+escapeValue(referringDomain);
+		}
+		
+		var d = new Date();
+		<span class="comment">// Delete the current cookie</span>
+		d.setTime(d.getTime() - 1*24*60*60*1000);
+		s.c_w(cookieName, <span class="literal">""</span>, d);
+		d = new Date();
+		<span class="comment">// Now write the cookie value again</span>
+		d.setTime(d.getTime() + cookieTimeout);
+		s.c_w(cookieName, str, d);
+		<span class="comment">//setCookie(cookieName, str, cookieTimeout);</span>
+	}
+	
+	<span class="comment">/**
+	*
+	* <span class="attrib">@private</span>
+	*/</span>	
+	<span class="reserved">function</span> escapeValue(value) {
+		value = value.replace(<span class="literal">"|"</span>, <span class="literal">"~!~"</span>);
+		value = encodeURIComponent(value);
+		<span class="reserved">return</span> value;
+	}
+	
+	<span class="comment">/**
+	*
+	* <span class="attrib">@private</span>
+	*/</span>	
+	<span class="reserved">function</span> unescapeValue(value) {
+		value = decodeURIComponent(value);
+		value = value.replace(<span class="literal">"~!~"</span>,<span class="literal">"|"</span>);
+		<span class="reserved">return</span> value;
+	}
+	
+	<span class="comment">/**
+	* Similar to JavaScript's native .indexOf() method.  Supports arrays which contain a collection of {<span class="attrib">@link</span> RegExp} objects.
+	* <span class="attrib">@param</span> {value} the value to search for in the array
+	* <span class="attrib">@param</span> {array} the array to search in for value
+	* <span class="attrib">@returns</span> the index of value in array
+	* <span class="attrib">@private</span>
+	*/</span>
+	<span class="reserved">function</span> inArray(value, array, useIndexOf) {
+		<span class="reserved">if</span> (useIndexOf === undefined) {
+			useIndexOf = false;
+		}
+		
+		<span class="reserved">if</span> (array.indexOf &amp;&amp; typeof(array) == <span class="literal">"string"</span>) {
+			<span class="reserved">return</span> array.indexOf(value);
+		}
+		
+		<span class="reserved">for</span> (var i = 0; i &lt; array.length; i++) {
+			<span class="reserved">if</span> (array[i].test) {
+				<span class="reserved">if</span> (array[i].test(value)) {
+					<span class="reserved">return</span> i;
+				}
+			} <span class="reserved">else</span> {
+				<span class="reserved">if</span> (useIndexOf) {
+					<span class="reserved">if</span> (array[i].indexOf(value) &gt;= 0) {
+						<span class="reserved">return</span> i;
+					}
+				} <span class="reserved">else</span> {
+					<span class="reserved">if</span> (array[i] === value) {
+						<span class="reserved">return</span> i;
+					}
+				}
+			}
+		}
+		<span class="reserved">return</span> -1;
+	}
+	
+	searchEngineList = new Array(
+		[<span class="literal">"daum"</span>, <span class="literal">"q"</span>, <span class="literal">"Daum"</span>],
+		[<span class="literal">"eniro"</span>, <span class="literal">"search_word"</span>, <span class="literal">"Eniro"</span>],
+		[<span class="literal">"naver"</span>, <span class="literal">"query"</span>, <span class="literal">"Naver"</span>],
+		[<span class="literal">"google"</span>, <span class="literal">"q"</span>, <span class="literal">"Google"</span>],
+		[<span class="literal">"yahoo"</span>, <span class="literal">"p"</span>, <span class="literal">"Yahoo"</span>],
+		[<span class="literal">"msn"</span>, <span class="literal">"q"</span>, <span class="literal">"MSN"</span>],
+		[<span class="literal">"bing"</span>, <span class="literal">"q"</span>, <span class="literal">"Bing"</span>],
+		[<span class="literal">"aol"</span>, <span class="literal">"query,encquery"</span>, <span class="literal">"AOL"</span>],
+		[<span class="literal">"lycos"</span>, <span class="literal">"query"</span>, <span class="literal">"Lycos"</span>],
+		[<span class="literal">"ask"</span>, <span class="literal">"q"</span>, <span class="literal">"Ask"</span>],
+		[<span class="literal">"altavista"</span>, <span class="literal">"q"</span>, <span class="literal">"Altavista"</span>],
+		[<span class="literal">"search.netscape"</span>, <span class="literal">"query"</span>, <span class="literal">"Netscape"</span>],
+		[<span class="literal">"cnn"</span>, <span class="literal">"query"</span>, <span class="literal">"CNN"</span>],
+		[<span class="literal">"about"</span>, <span class="literal">"terms"</span>, <span class="literal">"About"</span>],
+		[<span class="literal">"mamma"</span>, <span class="literal">"query"</span>, <span class="literal">"Mamma"</span>],
+		[<span class="literal">"alltheweb"</span>, <span class="literal">"q"</span>, <span class="literal">"Alltheweb"</span>],
+		[<span class="literal">"voila.fr"</span>, <span class="literal">"rdata"</span>, <span class="literal">"Voila"</span>],
+		[<span class="literal">"virgilio"</span>, <span class="literal">"qs"</span>, <span class="literal">"Virgilio"</span>],
+		[<span class="literal">"baidu"</span>, <span class="literal">"wd"</span>, <span class="literal">"Baidu"</span>],
+		[<span class="literal">"alice"</span>, <span class="literal">"qs"</span>, <span class="literal">"Alice"</span>],
+		[<span class="literal">"yandex"</span>, <span class="literal">"text"</span>, <span class="literal">"Yandex"</span>],
+		[<span class="literal">"najdi.org.mk"</span>, <span class="literal">"q"</span>, <span class="literal">"Najdi"</span>],
+		[<span class="literal">"seznam.cz"</span>, <span class="literal">"q"</span>, <span class="literal">"Seznam"</span>],
+		[<span class="literal">"search.com"</span>, <span class="literal">"q"</span>, <span class="literal">"Search.com"</span>],
+		[<span class="literal">"wp.pl"</span>, <span class="literal">"szukaj"</span>, <span class="literal">"Wirtulana Polska"</span>],
+		[<span class="literal">"onetcenter"</span>, <span class="literal">"qt"</span>, <span class="literal">"O*NET"</span>],
+		[<span class="literal">"szukacz"</span>, <span class="literal">"q"</span>, <span class="literal">"Szukacz"</span>],
+		[<span class="literal">"yam"</span>, <span class="literal">"k"</span>, <span class="literal">"Yam"</span>],
+		[<span class="literal">"pchome"</span>, <span class="literal">"q"</span>, <span class="literal">"PCHome"</span>],
+		[<span class="literal">"kvasir"</span>, <span class="literal">"q"</span>, <span class="literal">"Kvasir"</span>],
+		[<span class="literal">"sesam"</span>, <span class="literal">"q"</span>, <span class="literal">"Sesam"</span>],
+		[<span class="literal">"ozu"</span>, <span class="literal">"q"</span>, <span class="literal">"Ozu"</span>],
+		[<span class="literal">"terra"</span>, <span class="literal">"query"</span>, <span class="literal">"Terra"</span>],
+		[<span class="literal">"mynet"</span>, <span class="literal">"q"</span>, <span class="literal">"Mynet"</span>],
+		[<span class="literal">"ekolay"</span>, <span class="literal">"q"</span>, <span class="literal">"Ekolay"</span>],
+		[<span class="literal">"rambler"</span>, <span class="literal">"words"</span>, <span class="literal">"Rambler"</span>]
+	);	
+	s = omniObject;
+	<span class="reserved">this</span>.resetAll();
+}</pre>
+	<hr>
+
+
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> <font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top"><em>
+<b>Omniture - Traffic Organizer</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<font size="-1">
+
+</font>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Sun Aug 15 23:56:57 2010</div>
+</body>
+</html>

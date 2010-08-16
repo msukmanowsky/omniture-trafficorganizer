@@ -1,0 +1,8 @@
+== Tools
+
+1. jsdoc is provided to produce JavaDoc-like documentation from the JavaScript source code.  Recommend that you use following command:
+	perl tools/jsdoc/jsdoc.pl --project-name "Omniture - Traffic Organizer" -d doc src/*.js
+
+2. yuicompressor is provided to minimize JavaScript code.  Recommend that you use the following command within the source folder (for more info see http://www.julienlecomte.net/yuicompressor/README):
+
+	java -jar ../tools/yuicompressor-2.4.2.jar -o TrafficOrganizer.min.js --preserve-semi --type js TrafficOrganizer.js
