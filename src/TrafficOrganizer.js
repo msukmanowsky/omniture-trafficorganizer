@@ -423,7 +423,7 @@ TrafficOrganizer = function(omniObject) {
 		this.resetKeys();
 		
 		cookieTimeout 			= 1800000;	// 30 minutes
-		cookieName 				= "_ga_tsm";
+		cookieName 				= "_tsm";
 		
 		medium 					= "";
 		source					= "";
@@ -443,7 +443,7 @@ TrafficOrganizer = function(omniObject) {
 		ignoredReferrers.push(getDomainFromURI(document.location.href.toLowerCase()));
 		
 		directMediumName 		= "Direct / Brand Aware: Typed / Bookmarked / etc";
-		referralMediumName 	= "Referrer: Organic";
+		referralMediumName 		= "Referrer: Organic";
 		organicMediumName		= "Search Engine: Organic";
 		ppcMediumName			= "Search Engine: Paid";
 		
