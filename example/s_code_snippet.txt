@@ -1,0 +1,24 @@
+/* ... Other Omniture SiteCatalyst code */
+
+function s_doPlugins(s) {
+	var _tsmCalledOnce = false;
+	if (!_tsmCalledOnce) {
+		var _tsm = new TrafficOrganizer(s);
+		/* Add TrafficOrganizer Configuration Here */
+
+		_tsm.track();
+
+		s.eVar1 = _tsm.getMedium();
+		s.eVar2 = _tsm.getSource();
+		s.eVar3 = _tsm.getKeyword();
+		s.eVar4 = _tsm.getContent();
+		s.eVar5 = _tsm.getCampaign();
+		/* Assign other eVars as needed */
+	
+
+		_tsmCalledOnce = true;
+	}
+/* Other s_doPlugins code... */
+}  
+
+/* Other Omniture SiteCatalyst code ...*/

@@ -28,9 +28,11 @@
  *   <li>medium/channel</li>
  *	 <li>source</li>
  *   <li>keyword</li>
+ *   <li>keyword group</li>
  *   <li>content</li>
  *   <li>campaign name</li>
- *   <li>keyword group</li>
+ *   <li>referring domain</li>
+ *   <li>referring path</li>
  * </ul>
  * For ease of use, traffic source manager also makes the full referrer and referring domain available.
  * @author Mike Sukmanowsky
