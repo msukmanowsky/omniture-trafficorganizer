@@ -475,7 +475,7 @@ TrafficOrganizer = function(omniObject) {
 			//   - If the medium and source query string parameters are found, overwrite
 			var src = s.getQueryParam(sourceKey);
 			var med = s.getQueryParam(mediumKey);
-			if ( 	(inArray(referringDomain, ignoredReferrers) == -1) ||
+			if ( 	(document.referrer != "" && inArray(referringDomain, ignoredReferrers) == -1) ||
 					(src != "" && med != "") ) {
 				overwrite = true;	
 			}
